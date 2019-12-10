@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" id="input" value="">
+
+    <button onclick="formatFunc()"> Format string </button>
+
+    <script type="text/javascript">
+        function formatFunc() {
+            let inputText = document.getElementById("input").value;
+
+            if (inputText.length > 0) {
+                if (inputText.match(/[\d]+x[\d]+\s\([\d]+,[\d]+\)/g)) {
+                    // STRING MATCH
+                    let list = inputText.split(" ");
+
+                    let [ matrica, ...coordinate] = list;
+                    coordinate = coordinate.map(t => {
+                        if (t !== null && t !== "") {
+                            let [ x, y ] = t.replace(/[()]/g, '').split(',');
+
+
+                            let tObj = {
+                                x: Number(x),
+                                y: Number(y),
+                                drop: false
+                            };
+
+                            return tObj;
+                        }
+                    }).filter(t => t !== undefined);
+
+                    let [ matricaX, matricaY ] = matrica.split('x');
+
+                    console.log(`Matrica X: ${matricaX}`, `Matrica Y: ${matricaY}`);
+                    console.group("Lista na coordinate");
+                    console.log(coordinate);
+                    console.groupEnd();
+
+                    let currentPositionX = 0;
+                    let currentPositionY = 0;
+                    let moves = [];
+
+                    for (let i = 0; i < coordinate.length; i++) {
+                        if (coordinate[ i ].x > matricaX || coordinate[ i ].y > matricaY) {
+                            alert(" OUT OF RANGE ");
+                        } else {
+                            let xMove = '';
+                            let yMove = '';
+                            let diffX = currentPositionX - coordinate[ i ].x;
+                            let diffY = currentPositionY - coordinate[ i ].y;
+
+                            if (diffX < 0) {
+                                // DESNO
+                                xMove = returnMove(diffX, 'DESNO');
+                            } else {
+                                //LEVO
+                                xMove = returnMove(diffX, 'LEVO');
+                            }
+
+                            if (diffY < 0) {
+                                // GORE
+                                yMove = returnMove(diffY, 'GORE');
+                            } else {
+                                //DOLU
+                                yMove = returnMove(diffY, 'DOLU');
+                            }
+
+                            currentPositionX = coordinate[ i ].x;
+                            currentPositionY = coordinate[ i ].y;
+                            coordinate[ i ].drop = true;
+
+                            let result = xMove + yMove + "=> DROP!";
+                            moves.push(result);
+                        }
+                    }
+
+                    console.group("Moves");
+                    console.log(moves);
+                    console.groupEnd();
+
+                } else {
+                    alert("string not match");
+                }
+            }
+            else {
+                alert("Empty string");
+            }
+        }
+
+        function returnMove(count, letter) {
+            let out = '';
+
+            for (let i = 0; i < Math.abs(count); i++) {
+                out += letter;
+            }
+
+            return out;
+        }
+    </script>
+
+</body>
+
+</html>
